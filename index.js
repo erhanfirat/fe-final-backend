@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+// Models
+const Roles = require("./models/RoleModel.js");
 
 app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
@@ -26,6 +28,16 @@ app.use((req, res, next) => {
 });
 
 // APP STARTS ON 3001
+
+app.get("/roles", async (req, res) => {
+  try {
+    const roles = await Roles.getAllRoles();
+    res.status(200).json(roles);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
 
 app.listen(3001, () => {
   console.log("working on 3001");
