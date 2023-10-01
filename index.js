@@ -39,6 +39,33 @@ app.get("/roles", async (req, res) => {
   }
 });
 
+app.post("/user", async (req, res) => {
+  try {
+    res.status(200).json({});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
+app.get("/products", async (req, res) => {
+  try {
+    res.status(200).json([]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    res.status(200).json({});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
 app.listen(3001, () => {
   console.log("working on 3001");
 });
