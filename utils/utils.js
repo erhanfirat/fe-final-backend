@@ -1,3 +1,5 @@
+const nodemailer = require("nodemailer");
+
 function sendActivationEmail(email, activationToken) {
   // Configure Nodemailer transporter with your email service provider's settings
   const transporter = nodemailer.createTransport({
