@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 // Models
 const Roles = require("./models/RoleModel.js");
+const Users = require("./models/UserModel.js");
+const Utils = require("./utils/utils.js");
 
 app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
@@ -29,6 +31,8 @@ app.use((req, res, next) => {
 
 // APP STARTS ON 3001
 
+// USERS **************************************************
+
 app.get("/roles", async (req, res) => {
   try {
     const roles = await Roles.getAllRoles();
@@ -39,27 +43,57 @@ app.get("/roles", async (req, res) => {
   }
 });
 
-app.post("/user", async (req, res) => {
+app.post("/signup", async (req, res) => {
   try {
-    res.status(200).json({});
+    const userData = req.body;
+    const newUser = await Users.createWithActivation(userData);
+
+    Utils.sendActivationEmail(newUser.email, newUser.activationToken);
+
+    res.status(201).json({
+      message: "User created. Check your email for activation instructions.",
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred", err });
   }
 });
 
-app.get("/products", async (req, res) => {
-  try {
-    res.status(200).json([]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "An error occurred", err });
+app.get("/activate", async (req, res) => {
+  const { token } = req.query;
+
+  if (!token) {
+    return res.status(400).json({ error: "Activation token is missing." });
   }
+
+  const user = await Users.findByActivationToken(token);
+
+  if (!user) {
+    return res.status(404).json({ error: "Invalid activation token." });
+  }
+
+  // Update the user's account status (e.g., set 'isActive' to true)
+  await Users.activateUser(user.id);
+
+  res
+    .status(200)
+    .json({ message: `${user.email} account activated successfully.` });
 });
 
 app.post("/login", async (req, res) => {
   try {
     res.status(200).json({});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
+// PRODUCTS **************************************************
+
+app.get("/products", async (req, res) => {
+  try {
+    res.status(200).json([]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred", err });
