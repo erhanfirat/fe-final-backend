@@ -90,8 +90,18 @@ app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await Users.getUserByEmail(email);
 
-    if (!user || user.password !== password) {
-      return res.status(401).json({ message: "Invalid credentials" });
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: `There is no any account using the email: ${email}` });
+    }
+    if (user.activation_token) {
+      return res.status(401).json({
+        message: ` ${email} account is not activated. Please check you inbox and junk folder to activate your account.`,
+      });
+    }
+    if (user.password !== password) {
+      return res.status(401).json({ message: "Password is not correct!" });
     }
 
     const token = jwt.sign({ userId: user.id }, SECRET_KEY, {
