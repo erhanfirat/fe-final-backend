@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+require("dotenv").config();
 // Models
 const Roles = require("./models/RoleModel.js");
 const Users = require("./models/UserModel.js");
@@ -48,7 +49,7 @@ app.post("/signup", async (req, res) => {
     const userData = req.body;
     const newUser = await Users.createWithActivation(userData);
 
-    Utils.sendActivationEmail(newUser[0].email, newUser[0].activationToken);
+    Utils.sendActivationEmail(newUser[0].email, newUser[0].activation_token);
 
     res.status(201).json({
       message: "User created. Check your email for activation instructions.",
