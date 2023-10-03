@@ -8,6 +8,7 @@ require("dotenv").config();
 // Models
 const Roles = require("./models/RoleModel.js");
 const Users = require("./models/UserModel.js");
+const Categories = require("./models/CategoryModel.js");
 const Utils = require("./utils/utils.js");
 
 app.use(cors());
@@ -143,6 +144,17 @@ app.get("/verify", async (req, res) => {
 });
 
 // PRODUCTS **************************************************
+
+app.get("/categories", async (req, res) => {
+  try {
+    const categories = await Categories.getAllCategories();
+    
+    res.status(200).json(categories);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
 
 app.get("/products", async (req, res) => {
   try {
