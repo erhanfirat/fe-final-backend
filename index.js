@@ -48,7 +48,7 @@ app.post("/signup", async (req, res) => {
     const userData = req.body;
     const newUser = await Users.createWithActivation(userData);
 
-    Utils.sendActivationEmail(newUser.email, newUser.activationToken);
+    Utils.sendActivationEmail(newUser[0].email, newUser[0].activationToken);
 
     res.status(201).json({
       message: "User created. Check your email for activation instructions.",

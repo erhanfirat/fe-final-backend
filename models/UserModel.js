@@ -4,11 +4,14 @@ const Utils = require("../utils/utils");
 const getUserById = (userId) =>
   knex("users").select("*").where("id", userId).first();
 
-const createWithActivation = async (userData) => {
-  const activationToken = Utils.generateActivationToken(); // You'll need to implement this function
-  userData.activation_token = activationToken;
+const createWithActivation = (userData) => {
+  userData.activation_token = Utils.generateActivationToken();
 
-  return await knex("users").insert(userData);
+  console.log("user to create > ", userData);
+
+  return knex.transaction(
+    async (trx) => await trx("users").insert(userData).returning("*")
+  );
 };
 
 const findByActivationToken = async (activation_token) => {

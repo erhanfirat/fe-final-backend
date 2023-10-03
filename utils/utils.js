@@ -12,7 +12,7 @@ function sendActivationEmail(email, activationToken) {
 
   // Email content
   const mailOptions = {
-    from: "admin@workintech-fe-ecommerce.com",
+    from: "erhan@workintech.com.tr",
     to: email,
     subject: "Activate Your Account",
     text: `Click the following link to activate your account: 
