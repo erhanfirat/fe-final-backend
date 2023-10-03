@@ -2,7 +2,9 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
 // Models
 const Roles = require("./models/RoleModel.js");
 const Users = require("./models/UserModel.js");
@@ -12,6 +14,8 @@ app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 app.use(express.json());
+
+const SECRET_KEY = process.env.SECRET_KEY;
 
 // Test Endpoints ****************************************
 
@@ -83,11 +87,49 @@ app.get("/activate", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   try {
-    res.status(200).json({});
+    const { email, password } = req.body;
+    const user = await Users.getUserByEmail(email);
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ userId: user.id }, SECRET_KEY, {
+      expiresIn: "19d",
+    });
+
+    const { name, role_id } = user;
+
+    res.status(200).json({ token, name, email, role_id });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred", err });
   }
+});
+
+// Verify route
+app.get("/verify", async (req, res) => {
+  const token = req.header("Authorization");
+
+  if (!token) {
+    return res.status(401).json({ message: "No token" });
+  }
+
+  jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: "Not verified" });
+    }
+
+    // Token is valid; you can access the user ID from `decoded.userId`
+    const user = await Users.getUserById(decoded.userId);
+
+    const newToken = jwt.sign({ userId: user.id }, SECRET_KEY, {
+      expiresIn: "19d",
+    });
+
+    const { name, email, role_id } = user;
+    res.status(200).json({ name, email, role_id, token: newToken });
+  });
 });
 
 // PRODUCTS **************************************************

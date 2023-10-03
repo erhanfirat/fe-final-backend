@@ -4,6 +4,9 @@ const Utils = require("../utils/utils");
 const getUserById = (userId) =>
   knex("users").select("*").where("id", userId).first();
 
+const getUserByEmail = (email) =>
+  knex("users").select("*").where("email", email).first();
+
 const createWithActivation = (userData) => {
   userData.activation_token = Utils.generateActivationToken();
 
@@ -26,6 +29,7 @@ const activateUser = async (userId) => {
 
 module.exports = {
   getUserById,
+  getUserByEmail,
   createWithActivation,
   findByActivationToken,
   activateUser,
