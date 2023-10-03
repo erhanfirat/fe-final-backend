@@ -21,7 +21,7 @@ const findByActivationToken = async (activation_token) => {
 const activateUser = async (userId) => {
   return await knex("users")
     .where({ id: userId })
-    .update({ activationToken: null });
+    .update({ activation_token: null });
 };
 
 module.exports = {
