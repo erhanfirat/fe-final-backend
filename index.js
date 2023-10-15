@@ -196,6 +196,16 @@ app.get("/products", async (req, res) => {
   }
 });
 
+app.get("/products/:category", async (req, res) => {
+  try {
+    
+    res.status(200).json([]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
 app.listen(3001, () => {
   console.log("working on 3001");
 });
