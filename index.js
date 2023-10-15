@@ -9,6 +9,7 @@ require("dotenv").config();
 const Roles = require("./models/RoleModel.js");
 const Users = require("./models/UserModel.js");
 const Categories = require("./models/CategoryModel.js");
+const Stores = require("./models/StoreModel.js");
 const Utils = require("./utils/utils.js");
 
 app.use(cors());
@@ -51,8 +52,18 @@ app.get("/roles", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
   try {
-    const userData = req.body;
-    const newUser = await Users.createWithActivation(userData);
+    const { store, ...userData } = req.body;
+    const newUser = (await Users.createWithActivation(userData))[0];
+
+    console.log("****** newUser: ", newUser);
+
+    if (userData.role_id === 2) {
+      // eğer kullanıcı store olarak seçildiyse
+      store.user_id = newUser.id;
+      console.log("****** store: ", store);
+
+      Stores.createStore(store);
+    }
 
     Utils.sendActivationEmail(newUser[0].email, newUser[0].activation_token);
 
@@ -148,7 +159,7 @@ app.get("/verify", async (req, res) => {
 app.get("/categories", async (req, res) => {
   try {
     const categories = await Categories.getAllCategories();
-    
+
     res.status(200).json(categories);
   } catch (err) {
     console.error(err);

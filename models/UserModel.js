@@ -10,8 +10,6 @@ const getUserByEmail = (email) =>
 const createWithActivation = (userData) => {
   userData.activation_token = Utils.generateActivationToken();
 
-  console.log("user to create > ", userData);
-
   return knex.transaction(
     async (trx) => await trx("users").insert(userData).returning("*")
   );
