@@ -20,6 +20,7 @@ app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 app.use(express.json());
 
 const SECRET_KEY = process.env.SECRET_KEY;
+const CATEGORY_IMG_PREFIX = `${process.env.SERVER_URL}/assets/category-img/`;
 
 // Test Endpoints ****************************************
 
@@ -157,6 +158,9 @@ app.get("/verify", async (req, res) => {
 app.get("/categories", async (req, res) => {
   try {
     const categories = await Categories.getAllCategories();
+    categories.forEach((category) => {
+      category.img = CATEGORY_IMG_PREFIX + category.img;
+    });
 
     res.status(200).json(categories);
   } catch (err) {
