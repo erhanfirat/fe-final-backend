@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const path = require("path");
+const fs = require("fs");
 require("dotenv").config();
 
 // Models
@@ -157,6 +159,24 @@ app.get("/categories", async (req, res) => {
     const categories = await Categories.getAllCategories();
 
     res.status(200).json(categories);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
+app.get("/assets/category-img/:imageName", async (req, res) => {
+  try {
+    const imageName = req.params.imageName;
+    const imagePath = path.join(__dirname, "assets/category-img", imageName);
+
+    // Check if the file exists
+    if (fs.existsSync(imagePath)) {
+      // Use res.sendFile to serve the image
+      res.sendFile(imagePath);
+    } else {
+      res.status(404).send("Image not found");
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred", err });
