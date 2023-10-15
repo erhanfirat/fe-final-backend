@@ -65,7 +65,7 @@ app.post("/signup", async (req, res) => {
       Stores.createStore(store);
     }
 
-    Utils.sendActivationEmail(newUser[0].email, newUser[0].activation_token);
+    Utils.sendActivationEmail(newUser.email, newUser.activation_token);
 
     res.status(201).json({
       message: "User created. Check your email for activation instructions.",
