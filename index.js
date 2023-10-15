@@ -55,13 +55,9 @@ app.post("/signup", async (req, res) => {
     const { store, ...userData } = req.body;
     const newUser = (await Users.createWithActivation(userData))[0];
 
-    console.log("****** newUser: ", newUser);
-
-    if (userData.role_id === 2) {
+    if (userData.role_id === 2 && store) {
       // eğer kullanıcı store olarak seçildiyse
       store.user_id = newUser.id;
-      console.log("****** store: ", store);
-
       Stores.createStore(store);
     }
 
