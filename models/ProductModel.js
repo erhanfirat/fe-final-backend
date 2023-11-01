@@ -10,10 +10,19 @@ const getAllProductsByCategoryId = (categoryId, pagesize, offset) =>
     .limit(pagesize)
     .offset(offset);
 
-const createProduct = (product) => {
-  return knex.transaction(
-    async (trx) => await trx("products").insert(product).returning("*")
-  );
+const createProduct = async (product) => {
+  const { images, ...newProduct } = product;
+  const record = await knex("products").insert(newProduct);
+
+  const imageList = images.map((image, index) => ({
+    url: image,
+    product_id: record.id,
+    index,
+  }));
+
+  await knex("product_images").insert(imageList);
+
+  return record;
 };
 
 module.exports = {
