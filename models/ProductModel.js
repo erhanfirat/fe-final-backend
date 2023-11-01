@@ -10,7 +10,7 @@ const getProducts = async (category, sort, filterText, limit, offset) => {
 
   // Apply filters and sorting based on query parameters
   if (category) {
-    query.where("category", category);
+    query.where("category_id", category);
   }
 
   if (filterText) {
