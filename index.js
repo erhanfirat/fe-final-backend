@@ -12,7 +12,15 @@ const Roles = require("./models/RoleModel.js");
 const Users = require("./models/UserModel.js");
 const Categories = require("./models/CategoryModel.js");
 const Stores = require("./models/StoreModel.js");
+const Products = require("./models/ProductModel.js");
 const Utils = require("./utils/utils.js");
+const {
+  convertProductData,
+  kadinTisortList,
+  kadinAyakkabiList,
+  kadinElbiseList,
+  kadinCeketList,
+} = require("./db/sample-data.js");
 
 app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
@@ -198,7 +206,6 @@ app.get("/products", async (req, res) => {
 
 app.get("/products/:category", async (req, res) => {
   try {
-    
     res.status(200).json([]);
   } catch (err) {
     console.error(err);
@@ -209,3 +216,13 @@ app.get("/products/:category", async (req, res) => {
 app.listen(3001, () => {
   console.log("working on 3001");
 });
+
+const productList = [
+  // ...convertProductData(kadinTisortList, 1),
+  // ...convertProductData(kadinAyakkabiList, 2),
+  // ...convertProductData(kadinCeketList, 3),
+  // ...convertProductData(kadinElbiseList, 4),
+  // !ADDED
+];
+
+// productList.forEach((p) => Products.createProduct(p));
