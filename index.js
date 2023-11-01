@@ -197,10 +197,21 @@ app.get("/assets/category-img/:imageName", async (req, res) => {
 
 app.get("/products", async (req, res) => {
   try {
-    res.status(200).json([]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "An error occurred", err });
+    const { category, sort, filter, limit, offset } = req.query;
+
+    // Execute the query
+    const products = await Products.getProducts(
+      category,
+      sort,
+      filter,
+      limit,
+      offset
+    );
+
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
