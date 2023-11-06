@@ -52,8 +52,8 @@ const getProducts = async (category, sort, filterText, limit, offset) => {
   // Fetch and associate product images
   for (const product of products) {
     const images = await knex("product_images")
-      .where("product_id", product.id)
-      .select("url");
+      .select("url", "index")
+      .where("product_id", product.id);
     product.images = images;
   }
 
@@ -69,21 +69,41 @@ const getAllProductsByCategoryId = (categoryId, pagesize, offset) =>
 
 const createProduct = async (product) => {
   const { images, ...newProduct } = product;
-  const record = await knex("products").insert(newProduct);
+  const createdProductList = await knex("products")
+    .insert(newProduct)
+    .returning("*");
+
+  console.log("createdProductList > ", createdProductList);
 
   const imageList = images.map((image, index) => ({
     url: image,
-    product_id: record.id,
+    product_id: createdProductList[0].id,
     index,
   }));
 
   await knex("product_images").insert(imageList);
 
-  return record;
+  return createdProductList[0];
 };
+
+// const assignProductIdToImages = async () => {
+//   const productImageList = await knex("product_images").select("*");
+//   console.log("productImageList > ", productImageList.length);
+//   let productId = 15;
+//   for (let productImage of productImageList) {
+//     if (!productImage.product_id) {
+//       productImage.product_id = productId++;
+//       productImage &&
+//         (await knex("product_images")
+//           .where({ id: productImage.id })
+//           .update(productImage));
+//     }
+//   }
+// };
 
 module.exports = {
   getProducts,
   getAllProducts,
   createProduct,
+  // assignProductIdToImages,
 };

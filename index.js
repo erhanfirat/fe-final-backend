@@ -237,3 +237,5 @@ const productList = [
 ];
 
 // productList.forEach((p) => Products.createProduct(p));
+
+// Products.assignProductIdToImages();
