@@ -25,10 +25,22 @@ const activateUser = async (userId) => {
     .update({ activation_token: null });
 };
 
+const saveAddress = (addressData) => {
+  return knex.transaction(
+    async (trx) => await trx("address").insert(addressData).returning("*")
+  );
+};
+
+const getAddressOfUser = async (userId) => {
+  return await knex("address").select("*").where("user_id", userId);
+};
+
 module.exports = {
   getUserById,
   getUserByEmail,
   createWithActivation,
   findByActivationToken,
   activateUser,
+  saveAddress,
+  getAddressOfUser,
 };
