@@ -1,8 +1,8 @@
 const knex = require("../db/config");
 const { PAGE_LIMIT } = require("../utils/contants");
 
-const getAllProducts = (pagesize, offset) =>
-  knex("products").select("*").limit(pagesize).offset(offset);
+const getProductById = (productId) =>
+  knex("products").select("*").where("id", productId).first();
 
 const getProducts = async (category, sort, filterText, limit, offset) => {
   // Build the initial query to select from the 'products' table
@@ -86,24 +86,8 @@ const createProduct = async (product) => {
   return createdProductList[0];
 };
 
-// const assignProductIdToImages = async () => {
-//   const productImageList = await knex("product_images").select("*");
-//   console.log("productImageList > ", productImageList.length);
-//   let productId = 15;
-//   for (let productImage of productImageList) {
-//     if (!productImage.product_id) {
-//       productImage.product_id = productId++;
-//       productImage &&
-//         (await knex("product_images")
-//           .where({ id: productImage.id })
-//           .update(productImage));
-//     }
-//   }
-// };
-
 module.exports = {
   getProducts,
-  getAllProducts,
+  getProductById,
   createProduct,
-  // assignProductIdToImages,
 };

@@ -215,12 +215,17 @@ app.get("/products", async (req, res) => {
   }
 });
 
-app.get("/products/:category", async (req, res) => {
+app.get("/products/:productId", async (req, res) => {
   try {
-    res.status(200).json([]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "An error occurred", err });
+    const { productId } = req.params;
+
+    // Execute the query
+    const product = await Products.getProductById(productId);
+
+    res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
