@@ -1,8 +1,17 @@
 const knex = require("../db/config");
 const { PAGE_LIMIT } = require("../utils/contants");
 
-const getProductById = (productId) =>
-  knex("products").select("*").where("id", productId).first();
+const getProductById = async (productId) => {
+  const product = await knex("products")
+    .select("*")
+    .where("id", productId)
+    .first();
+  const images = await knex("product_images")
+    .select("url", "index")
+    .where("product_id", product.id);
+  product.images = images;
+  return product;
+};
 
 const getProducts = async (category, sort, filterText, limit, offset) => {
   // Build the initial query to select from the 'products' table
