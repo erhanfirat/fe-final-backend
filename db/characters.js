@@ -1,4 +1,4 @@
-export const charactersData = [
+const charactersData = [
   {
     name: "Luke Skywalker",
     height: "172",
@@ -137,3 +137,7 @@ export const charactersData = [
     url: "/people/6/",
   },
 ];
+
+module.exports = {
+  charactersData,
+};
