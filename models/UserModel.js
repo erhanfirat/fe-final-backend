@@ -35,6 +35,24 @@ const getAddressOfUser = async (userId) => {
   return await knex("address").select("*").where("user_id", userId);
 };
 
+const saveCard = (cardData) => {
+  return knex.transaction(
+    async (trx) => await trx("card").insert(cardData).returning("*")
+  );
+};
+const getCardsOfUser = async (userId) => {
+  return await knex("card").select("*").where("user_id", userId);
+};
+
+const saveOrder = (orderData) => {
+  return knex.transaction(
+    async (trx) => await trx("order").insert(orderData).returning("*")
+  );
+};
+const getOrdersOfUser = async (userId) => {
+  return await knex("order").select("*").where("user_id", userId);
+};
+
 module.exports = {
   getUserById,
   getUserByEmail,
@@ -43,4 +61,8 @@ module.exports = {
   activateUser,
   saveAddress,
   getAddressOfUser,
+  saveCard,
+  getCardsOfUser,
+  saveOrder,
+  getOrdersOfUser,
 };

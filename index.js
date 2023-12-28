@@ -21,6 +21,7 @@ const {
   kadinElbiseList,
   kadinCeketList,
 } = require("./db/sample-data.js");
+const { charactersData } = require("./db/characters.js");
 
 app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
@@ -185,6 +186,76 @@ app.post("/user/address", async (req, res) => {
   }
 });
 
+app.post("/card", async (req, res) => {
+  try {
+    const cardData = req.body;
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+      cardData.user_id = user.id;
+
+      const { user_id, ...card } = await Users.saveCard(cardData);
+
+      res.status(201).json(card);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+app.get("/card", async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+      cardData.user_id = user.id;
+
+      const { user_id, ...card } = await Users.saveCard(cardData);
+
+      res.status(201).json(card);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
+app.post("/order", async (req, res) => {
+  try {
+    const orderData = req.body;
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+      orderData.user_id = user.id;
+
+      const { user_id, ...order } = await Users.saveOrder(orderData);
+
+      res.status(201).json(order);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
 app.get("/user/address", async (req, res) => {
   try {
     const token = req.header("Authorization");
@@ -269,6 +340,15 @@ app.get("/products/:productId", async (req, res) => {
     const product = await Products.getProductById(productId);
 
     res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/characters", async (req, res) => {
+  try {
+    res.json(charactersData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
