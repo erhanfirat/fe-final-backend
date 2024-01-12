@@ -86,11 +86,27 @@ const getCardOfUser = async (userId) => {
 
 // ORDER
 
-const saveOrder = (orderData) => {
-  return knex.transaction(
-    async (trx) => await trx("order").insert(orderData).returning("*")
+const saveOrder = async (orderData) => {
+  const { products, ...orderToSave } = orderData;
+
+  const order = (await knex("order").insert(orderToSave).returning("*"))[0];
+
+  console.log("order saved!", order);
+
+  const orderProductsToSave = await products.map((p) => ({
+    ...p,
+    order_id: order.id,
+  }));
+
+  console.log("orderProductsToSave > ", orderProductsToSave);
+
+  const orderProducts = await knex("order_products").insert(
+    orderProductsToSave
   );
+
+  return { ...order, products: orderProducts };
 };
+
 const getOrdersOfUser = async (userId) => {
   return await knex("order").select("*").where("user_id", userId);
 };
