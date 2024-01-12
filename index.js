@@ -161,6 +161,8 @@ app.get("/verify", async (req, res) => {
   });
 });
 
+// ADDRESS ENDPOINTS
+
 app.post("/user/address", async (req, res) => {
   try {
     const addressData = req.body;
@@ -185,6 +187,30 @@ app.post("/user/address", async (req, res) => {
   }
 });
 
+app.put("/user/address", async (req, res) => {
+  try {
+    const addressData = req.body;
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+      addressData.user_id = user.id;
+
+      const { user_id, ...address } = await Users.updateAddress(addressData);
+
+      res.status(201).json(address);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
 app.get("/user/address", async (req, res) => {
   try {
     const token = req.header("Authorization");
@@ -200,6 +226,78 @@ app.get("/user/address", async (req, res) => {
       const addressList = await Users.getAddressOfUser(user.id);
 
       res.status(201).json(addressList);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
+// CARD ENDPOINTS
+
+app.post("/user/card", async (req, res) => {
+  try {
+    const cardData = req.body;
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+      cardData.user_id = user.id;
+
+      const { user_id, ...card } = await Users.saveCard(cardData);
+
+      res.status(201).json(card);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
+app.put("/user/card", async (req, res) => {
+  try {
+    const cardData = req.body;
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+      cardData.user_id = user.id;
+
+      const { user_id, ...card } = await Users.updateCard(cardData);
+
+      res.status(201).json(card);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
+app.get("/user/card", async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+
+      const cardList = await Users.getCardOfUser(user.id);
+
+      res.status(201).json(cardList);
     });
   } catch (err) {
     console.error(err);

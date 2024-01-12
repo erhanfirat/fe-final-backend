@@ -25,14 +25,63 @@ const activateUser = async (userId) => {
     .update({ activation_token: null });
 };
 
+// ADDRESS METHODS
+
+// address = {
+//   id,
+//   user_id,
+//   ...
+// }
+
 const saveAddress = (addressData) => {
   return knex.transaction(
     async (trx) => await trx("address").insert(addressData).returning("*")
   );
 };
 
+const updateAddress = (addressData) => {
+  return knex.transaction(
+    async (trx) =>
+      await trx("address")
+        .where({ id: addressData.id })
+        .update(addressData)
+        .returning("*")
+  );
+};
+
 const getAddressOfUser = async (userId) => {
   return await knex("address").select("*").where("user_id", userId);
+};
+
+// CARD METHODS
+
+// card = {
+//   id,
+//   user_id,
+//   card_no,
+//   expire_month,
+//   expire_year,
+//   name_on_card
+// }
+
+const saveCard = (cardData) => {
+  return knex.transaction(
+    async (trx) => await trx("credit_card").insert(cardData).returning("*")
+  );
+};
+
+const updateCard = (cardData) => {
+  return knex.transaction(
+    async (trx) =>
+      await trx("credit_card")
+        .where({ id: cardData.id })
+        .update(cardData)
+        .returning("*")
+  );
+};
+
+const getCardOfUser = async (userId) => {
+  return await knex("credit_card").select("*").where("user_id", userId);
 };
 
 module.exports = {
@@ -42,5 +91,9 @@ module.exports = {
   findByActivationToken,
   activateUser,
   saveAddress,
+  updateAddress,
   getAddressOfUser,
+  saveCard,
+  updateCard,
+  getCardOfUser,
 };
