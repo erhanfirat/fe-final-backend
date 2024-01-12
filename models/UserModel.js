@@ -84,6 +84,17 @@ const getCardOfUser = async (userId) => {
   return await knex("credit_card").select("*").where("user_id", userId);
 };
 
+// ORDER
+
+const saveOrder = (orderData) => {
+  return knex.transaction(
+    async (trx) => await trx("order").insert(orderData).returning("*")
+  );
+};
+const getOrdersOfUser = async (userId) => {
+  return await knex("order").select("*").where("user_id", userId);
+};
+
 module.exports = {
   getUserById,
   getUserByEmail,
@@ -96,4 +107,6 @@ module.exports = {
   saveCard,
   updateCard,
   getCardOfUser,
+  saveOrder,
+  getOrdersOfUser,
 };

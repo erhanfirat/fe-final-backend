@@ -21,6 +21,7 @@ const {
   kadinElbiseList,
   kadinCeketList,
 } = require("./db/sample-data.js");
+const { charactersData, filmsData } = require("./db/characters.js");
 
 app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
@@ -367,6 +368,24 @@ app.get("/products/:productId", async (req, res) => {
     const product = await Products.getProductById(productId);
 
     res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/characters", async (req, res) => {
+  try {
+    res.json(charactersData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/films", async (req, res) => {
+  try {
+    res.json(filmsData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
