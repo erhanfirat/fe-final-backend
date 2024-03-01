@@ -335,6 +335,35 @@ app.get("/user/card", async (req, res) => {
   }
 });
 
+app.delete("/user/card/:cardId", async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+      const card = await Users.getCardById(cardId);
+
+      if (user.id !== card.user_id) {
+        res.status(402).json({
+          error: "You are trying to delete the card you dont belong to!",
+        });
+      }
+      await Users.deleteCard(card);
+
+      res.status(201).json(card);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
 // ORDER ****************************************************
 
 app.post("/order", async (req, res) => {
