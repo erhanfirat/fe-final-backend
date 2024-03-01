@@ -212,6 +212,35 @@ app.put("/user/address", async (req, res) => {
   }
 });
 
+app.delete("/user/address/:addressId", async (req, res) => {
+  try {
+    const { addressId } = req.params;
+    const token = req.header("Authorization");
+
+    jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "User is not verified" });
+      }
+
+      // Token is valid; you can access the user ID from `decoded.userId`
+      const user = await Users.getUserById(decoded.userId);
+      const address = await Users.getAddressById(addressId);
+
+      if (user.id !== address.user_id) {
+        res.status(402).json({
+          error: "You are trying to delete the adress you dont belong to!",
+        });
+      }
+      await Users.deleteAddress(addressId);
+
+      res.status(201).json(address);
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred", err });
+  }
+});
+
 app.get("/user/address", async (req, res) => {
   try {
     const token = req.header("Authorization");

@@ -53,6 +53,14 @@ const getAddressOfUser = async (userId) => {
   return await knex("address").select("*").where("user_id", userId);
 };
 
+const getAddressById = async (addressId) => {
+  return await knex("address").select("*").where("id", addressId);
+};
+
+const deleteAddress = async (addressId) => {
+  return await knex("address").where("id", addressId).del();
+};
+
 // CARD METHODS
 
 // card = {
@@ -117,9 +125,11 @@ module.exports = {
   createWithActivation,
   findByActivationToken,
   activateUser,
+  getAddressById,
+  getAddressOfUser,
   saveAddress,
   updateAddress,
-  getAddressOfUser,
+  deleteAddress,
   saveCard,
   updateCard,
   getCardOfUser,
