@@ -370,7 +370,6 @@ app.post("/order", async (req, res) => {
   try {
     const { card_ccv, ...orderData } = req.body;
     const token = req.header("Authorization");
-    console.log("card_ccv, orderData >>>> ", card_ccv, orderData);
 
     jwt.verify(token, SECRET_KEY, async (err, decoded) => {
       if (err) {
