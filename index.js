@@ -328,8 +328,8 @@ app.get("/user/card", async (req, res) => {
     jwt.verify(token, SECRET_KEY, async (err, decoded) => {
       if (err) {
         return res.status(401).json({ message: "User is not verified" });
-      }
 
+      }
       // Token is valid; you can access the user ID from `decoded.userId`
       const user = await Users.getUserById(decoded.userId);
 
@@ -415,6 +415,11 @@ app.get("/order", async (req, res) => {
       const user = await Users.getUserById(decoded.userId);
 
       const orderList = await Users.getOrdersOfUser(user.id);
+
+      for (let i = 0; i < orderList.length; i++) {
+        const products = await Users.getProductListByOrderId(orderList[i].id);
+        orderList[i].products = products;
+      }
 
       res.status(201).json(orderList);
     });

@@ -1,12 +1,14 @@
 const knex = require("../db/config");
 const Utils = require("../utils/utils");
 
+const Products = require("./ProductModel.js");
+
 const getUserById = (userId) =>
   knex("users").select("*").where("id", userId).first();
 
 const getUserByEmail = (email) =>
   knex("users").select("*").where("email", email).first();
-  
+
 const createWithActivation = (userData) => {
   userData.activation_token = Utils.generateActivationToken();
 
@@ -127,6 +129,32 @@ const getOrdersOfUser = async (userId) => {
   return await knex("order").select("*").where("user_id", userId);
 };
 
+const getProductListByOrderId = async (orderId) => {
+  try {
+    const productList = await knex("order_products")
+      .select(
+        "products.id",
+        "products.name",
+        "products.description",
+        "products.price",
+        "order_products.count"
+      )
+      // .leftJoin('product_images', 'products.id', 'product_images.product_id')
+      .join("products", "order_products.product_id", "products.id")
+      .where("order_products.order_id", orderId);
+
+    for (const product of productList) {
+      const images = await Products.getImagesOfProduct(product.id);
+      product.images = images;
+    }
+
+    return productList;
+  } catch (error) {
+    console.error("Error fetching product list for order:", error);
+    throw error;
+  }
+};
+
 module.exports = {
   getUserById,
   getUserByEmail,
@@ -145,4 +173,5 @@ module.exports = {
   getCardOfUser,
   saveOrder,
   getOrdersOfUser,
+  getProductListByOrderId,
 };

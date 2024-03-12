@@ -60,9 +60,7 @@ const getProducts = async (category, sort, filterText, limit, offset) => {
 
   // Fetch and associate product images
   for (const product of products) {
-    const images = await knex("product_images")
-      .select("url", "index")
-      .where("product_id", product.id);
+    const images = await getImagesOfProduct(product.id);
     product.images = images;
   }
 
@@ -95,8 +93,17 @@ const createProduct = async (product) => {
   return createdProductList[0];
 };
 
+const getImagesOfProduct = async (productId) => {
+  const images = await knex("product_images")
+    .select("url", "index")
+    .where("product_id", productId);
+
+  return images;
+};
+
 module.exports = {
   getProducts,
   getProductById,
   createProduct,
+  getImagesOfProduct,
 };
