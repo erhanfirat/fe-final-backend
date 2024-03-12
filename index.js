@@ -224,16 +224,24 @@ app.delete("/user/address/:addressId", async (req, res) => {
 
       // Token is valid; you can access the user ID from `decoded.userId`
       const user = await Users.getUserById(decoded.userId);
-      const address = await Users.getAddressById(addressId);
+      const address = await Users.getAddressById(parseInt(addressId));
 
-      if (user.id !== address.user_id) {
+      console.log(" req.params ********* ", req.params);
+      console.log("user ********* ", user);
+      console.log("address ********* ", address);
+      if (!address[0]) {
+        res.status(403).json({
+          error: "There is no address record found by id " + addressId,
+        });
+      } else if (user.id != address[0].user_id) {
         res.status(402).json({
           error: "You are trying to delete the adress you dont belong to!",
         });
-      }
-      await Users.deleteAddress(addressId);
+      } else {
+        await Users.deleteAddress(addressId);
 
-      res.status(201).json(address);
+        res.status(201).json("Address record deleted!");
+      }
     });
   } catch (err) {
     console.error(err);
@@ -347,16 +355,20 @@ app.delete("/user/card/:cardId", async (req, res) => {
 
       // Token is valid; you can access the user ID from `decoded.userId`
       const user = await Users.getUserById(decoded.userId);
-      const card = await Users.getCardById(cardId);
+      const card = await Users.getCardById(parseInt(cardId));
 
-      if (user.id !== card.user_id) {
+      if (!card[0]) {
+        res.status(403).json({
+          error: "There is no card record found by id: " + cardId,
+        });
+      } else if (user.id !== card[0].user_id) {
         res.status(402).json({
           error: "You are trying to delete the card you dont belong to!",
         });
+      } else {
+        await Users.deleteCard(parseInt(cardId));
+        res.status(201).json("Credit card record deleted!");
       }
-      await Users.deleteCard(card);
-
-      res.status(201).json(card);
     });
   } catch (err) {
     console.error(err);

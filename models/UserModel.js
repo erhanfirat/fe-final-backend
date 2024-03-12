@@ -6,7 +6,7 @@ const getUserById = (userId) =>
 
 const getUserByEmail = (email) =>
   knex("users").select("*").where("email", email).first();
-
+  
 const createWithActivation = (userData) => {
   userData.activation_token = Utils.generateActivationToken();
 
