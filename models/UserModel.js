@@ -139,7 +139,6 @@ const getProductListByOrderId = async (orderId) => {
         "products.price",
         "order_products.count"
       )
-      // .leftJoin('product_images', 'products.id', 'product_images.product_id')
       .join("products", "order_products.product_id", "products.id")
       .where("order_products.order_id", orderId);
 
